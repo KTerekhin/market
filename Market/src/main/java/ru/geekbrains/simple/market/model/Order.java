@@ -2,8 +2,15 @@ package ru.geekbrains.simple.market.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import ru.geekbrains.simple.market.beans.Cart;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Data
@@ -15,9 +22,36 @@ public class Order {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @OneToMany(mappedBy = "order")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<OrderItem> items;
 
-    @Column(name = "total_price")
-    private int totalPrice;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
+    @Column(name = "price")
+    private int price;
+
+    @Column(name = "address")
+    private String address;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    public Order(User user, Cart cart, String address) {
+        this.items = new ArrayList<>();
+        this.owner = user;
+        this.address = address;
+        this.price = cart.getTotalPrice();
+        cart.getItems().stream().forEach((oi) -> {
+            oi.setOrder(this);
+            items.add(oi);
+        });
+    }
 }

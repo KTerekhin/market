@@ -7,18 +7,13 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import ru.geekbrains.simple.market.exceptions_handling.ResourceNotFoundException;
-import ru.geekbrains.simple.market.model.Order;
 import ru.geekbrains.simple.market.model.OrderItem;
 import ru.geekbrains.simple.market.model.Product;
-import ru.geekbrains.simple.market.model.User;
-import ru.geekbrains.simple.market.repositories.OrderItemRepository;
-import ru.geekbrains.simple.market.repositories.OrderRepository;
 import ru.geekbrains.simple.market.services.ProductService;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Component
 @RequiredArgsConstructor
@@ -26,8 +21,6 @@ import java.util.List;
 @Data
 public class Cart {
     private final ProductService productService;
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private List<OrderItem> items;
     private int totalPrice;
 
@@ -74,14 +67,14 @@ public class Cart {
         }
     }
 
-    public void checkout(User user) {
-        Order order = new Order();
-        order.setTotalPrice(totalPrice);
-        order.setUserId(user.getId());
-        orderRepository.save(order);
-        for (OrderItem oi : items) {
-            oi.setOrderId(order.getId());
-            orderItemRepository.save(oi);
-        }
-    }
+//    public void checkout(User user) {
+//        Order order = new Order();
+//        order.setTotalPrice(totalPrice);
+//        order.setUserId(user.getId());
+//        orderRepository.save(order);
+//        for (OrderItem oi : items) {
+//            oi.setOrderId(order.getId());
+//            orderItemRepository.save(oi);
+//        }
+//    }
 }
