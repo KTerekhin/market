@@ -46,20 +46,21 @@ CREATE TABLE cart_items
     `price_per_item`    INT NOT NULL,
     `price`             INT NOT NULL,
     PRIMARY KEY (`user_id`, `product_id`),
-
     CONSTRAINT `fk_product_id` FOREIGN KEY (`product_id`) REFERENCES products (`id`),
-
     CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES users (`id`)
 
 );
 
 CREATE TABLE orders
 (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
-    `user_id` BIGINT NOT NULL,
-    `total_price` INT,
+    `id`                BIGINT NOT NULL AUTO_INCREMENT,
+    `owner_id`          BIGINT NOT NULL,
+    `price`             INT,
+    `address`           VARCHAR(255) NOT NULL,
+    `created_at`        timestamp default current_timestamp,
+    `updated_at`        timestamp default current_timestamp,
     PRIMARY KEY (`id`),
-    CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`user_id`) REFERENCES users (`id`)
+    CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`owner_id`) REFERENCES users (`id`)
 );
 
 CREATE TABLE order_items
@@ -67,11 +68,15 @@ CREATE TABLE order_items
     `id`                 BIGINT NOT NULL AUTO_INCREMENT,
     `order_id`           BIGINT NOT NULL,
     `product_id`         BIGINT NOT NULL,
-    `quantity`           INT NOT NULL,
-    `price_per_product`  INT NOT NULL,
-    `price`              INT NOT NULL,
+    `title`              VARCHAR(50),
+    `quantity`           INT,
+    `price_per_product`  INT,
+    `price`              INT,
+    `created_at`         timestamp default current_timestamp,
+    `updated_at`         timestamp default current_timestamp,
     PRIMARY KEY (`id`),
-    CONSTRAINT `fk_oi_product_id` FOREIGN KEY (`product_id`) REFERENCES products (`id`)
+    CONSTRAINT `fk_oi_product_id` FOREIGN KEY (`product_id`) REFERENCES products (`id`),
+    CONSTRAINT `fk_oi_order_id` FOREIGN KEY (`order_id`) REFERENCES orders (`id`)
 );
 
 CREATE TABLE roles
