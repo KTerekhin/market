@@ -3,6 +3,8 @@ CREATE TABLE products
     `id`        BIGINT NOT NULL AUTO_INCREMENT,
     `title`     VARCHAR(255) NOT NULL,
     `price`     INT NOT NULL,
+    `created_at`        timestamp default current_timestamp,
+    `updated_at`        timestamp default current_timestamp,
     PRIMARY KEY (`id`)
 );
 
@@ -30,10 +32,12 @@ VALUES ('Coffee', '300'),
 
 CREATE TABLE users
 (
-    `id`          BIGINT NOT NULL AUTO_INCREMENT,
-    `username`    VARCHAR(30) NOT NULL UNIQUE,
-    `password`    VARCHAR(80) NOT NULL,
-    `email`       VARCHAR(50) UNIQUE,
+    `id`                BIGINT NOT NULL AUTO_INCREMENT,
+    `username`          VARCHAR(30) NOT NULL UNIQUE,
+    `password`          VARCHAR(80) NOT NULL,
+    `email`             VARCHAR(50) UNIQUE,
+    `created_at`        timestamp default current_timestamp,
+    `updated_at`        timestamp default current_timestamp,
     PRIMARY KEY (`id`)
 );
 
@@ -83,6 +87,8 @@ CREATE TABLE roles
 (
     `id`            BIGINT NOT NULL AUTO_INCREMENT,
     `name`          varchar(50) NOT NULL UNIQUE,
+    `created_at`         timestamp default current_timestamp,
+    `updated_at`         timestamp default current_timestamp,
     PRIMARY KEY (`id`)
 );
 
