@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("products")
+@CrossOrigin("*")
 public class ProductController {
     public final EurekaClient eurekaClient;
     private final ProductService productService;
@@ -24,7 +24,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductDto> findAllProducts() {
+    public List<Product> findAllProducts() {
         return productService.findAllProducts();
     }
 
