@@ -15,3 +15,4 @@ eureka:
 zuul:
   routes:
     rest-service: /api/v1/products/**
+  sensitive-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
