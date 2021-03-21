@@ -1,14 +1,13 @@
 CREATE TABLE products
 (
-    `id`        BIGINT NOT NULL AUTO_INCREMENT,
-    `title`     VARCHAR(255) NOT NULL,
-    `price`     INT NOT NULL,
-    `created_at`        timestamp default current_timestamp,
-    `updated_at`        timestamp default current_timestamp,
-    PRIMARY KEY (`id`)
+    id                      bigserial primary key,
+    title                   varchar(255),
+    price                   int,
+    created_at              timestamp default current_timestamp,
+    updated_at              timestamp default current_timestamp
 );
 
-INSERT INTO products (`title`, `price`)
+INSERT INTO products (title, price)
 VALUES ('Coffee', '300'),
        ('Meat', '350'),
        ('Pizza', '500'),
@@ -32,83 +31,78 @@ VALUES ('Coffee', '300'),
 
 CREATE TABLE users
 (
-    `id`                BIGINT NOT NULL AUTO_INCREMENT,
-    `username`          VARCHAR(30) NOT NULL UNIQUE,
-    `password`          VARCHAR(80) NOT NULL,
-    `email`             VARCHAR(50) UNIQUE,
-    `created_at`        timestamp default current_timestamp,
-    `updated_at`        timestamp default current_timestamp,
-    PRIMARY KEY (`id`)
-);
-
-CREATE TABLE cart_items
-(
-    `user_id`           BIGINT NOT NULL,
-    `product_id`        BIGINT NOT NULL,
-    `title`             VARCHAR(255) NOT NULL,
-    `quantity`          INT DEFAULT NULL,
-    `price_per_item`    INT NOT NULL,
-    `price`             INT NOT NULL,
-    PRIMARY KEY (`user_id`, `product_id`),
-    CONSTRAINT `fk_product_id` FOREIGN KEY (`product_id`) REFERENCES products (`id`),
-    CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES users (`id`)
-
+    id                      bigserial primary key,
+    username                varchar(30) not null unique,
+    password                varchar(80) not null,
+    email                   varchar(50) unique,
+    created_at              timestamp default current_timestamp,
+    updated_at              timestamp default current_timestamp
 );
 
 CREATE TABLE orders
 (
-    `id`                BIGINT NOT NULL AUTO_INCREMENT,
-    `owner_id`          BIGINT NOT NULL,
-    `price`             INT,
-    `address`           VARCHAR(255) NOT NULL,
-    `created_at`        timestamp default current_timestamp,
-    `updated_at`        timestamp default current_timestamp,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `fk_orders_user_id` FOREIGN KEY (`owner_id`) REFERENCES users (`id`)
+    id                      bigserial primary key,
+    owner_id                bigint references users (id),
+    price                   int,
+    address                 varchar(255),
+    created_at              timestamp default current_timestamp,
+    updated_at              timestamp default current_timestamp
 );
 
 CREATE TABLE order_items
 (
-    `id`                 BIGINT NOT NULL AUTO_INCREMENT,
-    `order_id`           BIGINT NOT NULL,
-    `product_id`         BIGINT NOT NULL,
-    `title`              VARCHAR(50),
-    `quantity`           INT,
-    `price_per_product`  INT,
-    `price`              INT,
-    `created_at`         timestamp default current_timestamp,
-    `updated_at`         timestamp default current_timestamp,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `fk_oi_product_id` FOREIGN KEY (`product_id`) REFERENCES products (`id`),
-    CONSTRAINT `fk_oi_order_id` FOREIGN KEY (`order_id`) REFERENCES orders (`id`)
+    id                      bigserial primary key,
+    order_id                bigint references orders (id),
+    product_id              bigint references products (id),
+    title                   varchar(255),
+    quantity                int,
+    price_per_product       int,
+    price                   int,
+    created_at              timestamp default current_timestamp,
+    updated_at              timestamp default current_timestamp
 );
 
 CREATE TABLE roles
 (
-    `id`            BIGINT NOT NULL AUTO_INCREMENT,
-    `name`          varchar(50) NOT NULL UNIQUE,
-    `created_at`         timestamp default current_timestamp,
-    `updated_at`         timestamp default current_timestamp,
-    PRIMARY KEY (`id`)
+    id                      bigserial primary key,
+    name                    varchar(50) not null unique,
+    created_at              timestamp default current_timestamp,
+    updated_at              timestamp default current_timestamp
 );
 
 CREATE TABLE users_roles
 (
-    `user_id`   BIGINT NOT NULL,
-    `role_id`   BIGINT NOT NULL,
-    PRIMARY KEY (`user_id`, `role_id`),
-    CONSTRAINT `fk_ur_user_id` FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    CONSTRAINT `fk_ur_role_id` FOREIGN KEY (`role_id`) REFERENCES roles (`id`)
+    user_id                 bigint not null references users (id),
+    role_id                 bigint not null references roles (id),
+    primary key (user_id, role_id)
 );
 
-INSERT INTO roles (`name`)
+INSERT INTO roles (name)
 VALUES ('ROLE_USER'),
        ('ROLE_ADMIN');
 
-INSERT INTO users (`username`, `password`, `email`)
+INSERT INTO users (username, password, email)
 VALUES ('user', '$2y$12$IAieIJUHqfTJseESXekFc..ejWs2QrXIGOssXWHLolAVMhyPUvxGy', 'user_johnson@gmail.com'),
        ('admin', '$2y$12$JbKq5NgIkhY/zrfwRHJiZuqALkKYZzLW4HrApex/Ja6Vfb43VS8wq', 'admin_johnson@gmail.com');
 
-INSERT INTO users_roles (`user_id`, `role_id`)
-VALUES (1, 1),
-       (2, 2);
+INSERT INTO users_roles (user_id, role_id)
+VALUES
+    (1, 1),
+    (2, 2);
+
+create table carts (
+    id                      UUID primary key,
+    price                   int
+);
+
+create table cart_items (
+    id                bigserial primary key,
+    cart_id           UUID references carts (id),
+    product_id        bigint references products (id),
+    title             varchar(255),
+    quantity          int,
+    price_per_product int,
+    price             int,
+    created_at        timestamp default current_timestamp,
+    updated_at        timestamp default current_timestamp
+);
