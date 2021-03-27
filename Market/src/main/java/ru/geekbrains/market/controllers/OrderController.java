@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.geekbrains.market.dto.CartDto;
 import ru.geekbrains.market.dto.OrderDto;
 import ru.geekbrains.market.exceptions_handling.ResourceNotFoundException;
-import ru.geekbrains.market.beans.Cart;
 import ru.geekbrains.market.model.Order;
 import ru.geekbrains.market.model.User;
 import ru.geekbrains.market.services.OrderService;
@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
-    private Cart cart;
 
     @PostMapping/*("/create")*/
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,5 +41,10 @@ public class OrderController {
     @GetMapping
     public List<OrderDto> getCurrentUserOrders(Principal principal) {
         return orderService.findAllOrdersByOwnerName(principal.getName()).stream().map(OrderDto::new).collect(Collectors.toList());
+    }
+
+    @PostMapping("/js")
+    public void getCartFromJS(@RequestBody CartDto cartDto) {
+        System.out.println(cartDto);
     }
 }

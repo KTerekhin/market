@@ -3,7 +3,6 @@ package ru.geekbrains.market.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.geekbrains.market.repositories.OrderRepository;
-import ru.geekbrains.market.beans.Cart;
 import ru.geekbrains.market.model.Order;
 import ru.geekbrains.market.model.User;
 
@@ -14,12 +13,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final Cart cart;
 
     public Order createFromUserCart(User user, String address) {
-        Order order = new Order(cart, user, address);
+        Order order = new Order(null, user, address);
         order = orderRepository.save(order);
-        cart.clear();
         return order;
     }
 
