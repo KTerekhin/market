@@ -37,11 +37,16 @@ angular.module('app').controller('productsController', function ($scope, $http, 
     }
 
     $scope.addProductToCart = function (productId) {
-        $http.get(contextPath + '/api/v1/cart/add/' + productId)
-            .then(function (response) {
-                $localStorage.marketCart.add(response.data);
-                console.log($localStorage.marketCart);
-            });
+        $http({
+            url: contextPath + '/api/v1/cart/add',
+            method: 'POST',
+            params: {
+                uuid: $localStorage.marketCartUuid,
+                product_id: productId
+            }
+        }).then(function (response) {
+            console.log("OK");
+        });
     }
 
     $scope.createOrder = function () {

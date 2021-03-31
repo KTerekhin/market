@@ -19,13 +19,24 @@ public class Cart {
     @Column(name = "id")
     private UUID id;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> items;
 
     @Column(name = "price")
     private int price;
 
+    @OneToOne
+    @JoinColumn(name = "owner_id")
+    private User user;
+
     public void add(CartItem cartItem) {
+        for (CartItem ci : this.items) {
+            if (ci.getProduct().getId().equals(cartItem.getProduct().getId())) {
+                ci.incrementQuantity(cartItem.getQuantity());
+                recalculate();
+                return;
+            }
+        }
         this.items.add(cartItem);
         cartItem.setCart(this);
         recalculate();
@@ -50,5 +61,27 @@ public class Cart {
             price += ci.getPrice();
         }
     }
-}
 
+    public void clear() {
+        for (CartItem ci : items) {
+            ci.setCart(null);
+        }
+        items.clear();
+        recalculate();
+    }
+
+    public CartItem getItemByProductId(Long productId) {
+        for (CartItem ci : items) {
+            if (ci.getProduct().getId().equals(productId)) {
+                return ci;
+            }
+        }
+        return null;
+    }
+
+    public void merge(Cart another) {
+        for (CartItem ci : another.items) {
+            add(ci);
+        }
+    }
+}

@@ -47,5 +47,11 @@ public class Order {
         this.items = new ArrayList<>();
         this.owner = user;
         this.address = address;
+        this.price = cart.getPrice();
+        for (CartItem ci : cart.getItems()) {
+            OrderItem oi = new OrderItem(ci);
+            oi.setOrder(this);
+            this.items.add(oi);
+        }
     }
 }

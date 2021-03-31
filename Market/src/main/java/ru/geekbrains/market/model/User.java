@@ -1,7 +1,6 @@
 package ru.geekbrains.market.model;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,7 +11,6 @@ import java.util.Collection;
 @Entity
 @Data
 @Table(name = "users")
-@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

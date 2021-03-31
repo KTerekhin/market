@@ -7,6 +7,7 @@ import ru.geekbrains.market.exceptions_handling.ResourceNotFoundException;
 import ru.geekbrains.market.model.Cart;
 import ru.geekbrains.market.services.CartService;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -16,9 +17,11 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public UUID createNewCart() {
-        Cart cart = cartService.save(new Cart());
-        return cart.getId();
+    public UUID createNewCart(Principal principal) {
+        if (principal == null) {
+            return cartService.getCartForUser(null, null);
+        }
+        return cartService.getCartForUser(principal.getName(), null);
     }
 
     @GetMapping("/{uuid}")
@@ -27,19 +30,19 @@ public class CartController {
         return new CartDto(cart);
     }
 
-    @GetMapping("/{uuid}/add/{product_id}")
-    public void addProductToCart(@PathVariable UUID uuid, @PathVariable(name = "product_id") Long productId) {
+    @PostMapping("/add")
+    public void addProductToCart(@RequestParam UUID uuid, @RequestParam(name = "product_id") Long productId) {
         cartService.addToCart(uuid, productId);
+    }
+
+    @GetMapping("/dec")
+    public void decrementProductFromCart(@RequestParam UUID uuid, @RequestParam(name = "product_id") Long productId) {
+        cartService.decrementProductFromCart(uuid, productId);
+    }
+
+    @PostMapping("/clear")
+    public void clearCart(@RequestParam UUID uuid) {
+        cartService.clearCart(uuid);
     }
 }
 
-//    @GetMapping("/{uuid}/dec/{product_id}")
-//    public void decrementProductFromCart(@PathVariable UUID uuid, @PathVariable(name = "product_id") Long productId) {
-//        cartService.decrementProductInCart(uuid, productId);
-//    }
-
-//    @GetMapping("/clear")
-//    public void clearCart() {
-//        cart.clear();
-//    }
-//}
