@@ -1,10 +1,10 @@
-package ru.geekbrains.simple.market;
+package ru.geekbrains.market.tests;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class Lesson8ApplicationTests {
+class MarketApplicationTests {
 
 	@Test
 	void contextLoads() {
