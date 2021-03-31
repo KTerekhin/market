@@ -1,60 +1,64 @@
-angular.module('app').controller('cartController', function ($scope, $http, $location) {
+angular.module('app').controller('cartController', function ($scope, $http, $location, $localStorage) {
     const contextPath = 'http://localhost:8189/market';
 
-    $scope.showCart = function () {
+    $scope.clearCart = function () {
         $http({
-            url: contextPath + '/api/v1/cart',
-            method: 'GET'
+            url: contextPath + '/api/v1/cart/clear',
+            method: 'POST',
+            params: {
+                uuid: $localStorage.marketCartUuid
+            }
         }).then(function (response) {
-            $scope.Cart = response.data;
+            $scope.loadCart();
         });
-    };
+    }
 
-    $scope.addProductToCart = function (id) {
-        $http.get(contextPath + '/api/v1/cart/add/' + id)
+    $scope.createOrder = function () {
+        $http.get(contextPath + '/api/v1/orders/create')
             .then(function (response) {
+                $scope.showMyOrders();
                 $scope.showCart();
             });
     }
 
-    $scope.decrementProductFromCart = function (productId) {
-        $http({
-            url: contextPath + '/api/v1/cart/dec/' + productId,
-            method: 'GET'
-        }).then(function (response) {
-            $scope.showCart();
-        });
-    };
-
-    $scope.clearCart = function () {
-        $http.get(contextPath + '/api/v1/cart/clear')
+    $scope.loadCart = function () {
+        $http.get(contextPath + '/api/v1/cart/' + $localStorage.marketCartUuid)
             .then(function (response) {
-                $scope.showCart();
+                $scope.marketUserCart = response.data;
             });
-    };
-
-    // $scope.createOrder = function () {
-    //     $http.get(contextPath + '/api/v1/orders/create')
-    //         .then(function (response) {
-    //             $scope.showMyOrders();
-    //             $scope.showCart();
-    //         });
-    // }
-
-    // $scope.createOrder = function () {
-    //     $http({
-    //         url: contextPath + '/api/v1/orders/create',
-    //         method: 'POST',
-    //         params: {address: $scope.order.address}
-    //     }).then(function (response) {
-    //         $scope.showMyOrders();
-    //         $scope.showCart();
-    //     })
-    // }
+    }
 
     $scope.goToOrderSubmit = function () {
         $location.path('/order_confirmation');
     }
 
-    $scope.showCart();
+    $scope.addProductToCart = function (productId) {
+        $http({
+            url: contextPath + '/api/v1/cart/add',
+            method: 'POST',
+            params: {
+                uuid: $localStorage.marketCartUuid,
+                product_id: productId
+            }
+        }).then(function (response) {
+            console.log("OK");
+            $scope.loadCart();
+        });
+    }
+
+    $scope.decrementProductFromCart = function (productId) {
+        $http({
+            url: contextPath + '/api/v1/cart/dec',
+            method: 'GET',
+            params: {
+                uuid: $localStorage.marketCartUuid,
+                product_id: productId
+            }
+        }).then(function (response) {
+            console.log("OK");
+            $scope.loadCart();
+        });
+    }
+
+    $scope.loadCart();
 });

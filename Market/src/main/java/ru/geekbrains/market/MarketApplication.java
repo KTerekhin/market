@@ -7,8 +7,6 @@ import org.springframework.context.annotation.PropertySource;
 @SpringBootApplication
 @PropertySource("classpath:secured.properties")
 public class MarketApplication {
-    // Домашнее задание:
-    // 1. Используя Spring-WS, реализовать Web Service для выгрузки списка товаров.
 	public static void main(String[] args) {
 		SpringApplication.run(MarketApplication.class, args);
 	}

@@ -3,36 +3,46 @@ package ru.geekbrains.market.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.market.dto.CartDto;
-import ru.geekbrains.market.beans.Cart;
+import ru.geekbrains.market.exceptions_handling.ResourceNotFoundException;
+import ru.geekbrains.market.model.Cart;
+import ru.geekbrains.market.services.CartService;
+
+import java.security.Principal;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/cart")
+@RequestMapping("/api/v1/cart")
 @RequiredArgsConstructor
 public class CartController {
-    private final Cart cart;
+    private final CartService cartService;
 
-    @GetMapping
-    public CartDto showCart (){
+    @PostMapping
+    public UUID createNewCart(Principal principal) {
+        if (principal == null) {
+            return cartService.getCartForUser(null, null);
+        }
+        return cartService.getCartForUser(principal.getName(), null);
+    }
+
+    @GetMapping("/{uuid}")
+    public CartDto getCurrentCart(@PathVariable UUID uuid) {
+        Cart cart = cartService.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Unable to find cart with id: " + uuid));
         return new CartDto(cart);
     }
 
-    @GetMapping("/add/{id}")
-    public void addProductIntoCart(@PathVariable Long id) {
-        cart.addProductToCart(id);
+    @PostMapping("/add")
+    public void addProductToCart(@RequestParam UUID uuid, @RequestParam(name = "product_id") Long productId) {
+        cartService.addToCart(uuid, productId);
     }
 
-    @GetMapping("/inc/{id}")
-    public void incrementProductIntoCart(@PathVariable Long id) {
-        cart.addProductToCart(id);
+    @GetMapping("/dec")
+    public void decrementProductFromCart(@RequestParam UUID uuid, @RequestParam(name = "product_id") Long productId) {
+        cartService.decrementProductFromCart(uuid, productId);
     }
 
-    @GetMapping("/dec/{id}")
-    public void decrementProductFromCart(@PathVariable Long id) {
-        cart.decrementProductInCart(id);
-    }
-
-    @GetMapping("/clear")
-    public void clearCart() {
-        cart.clear();
+    @PostMapping("/clear")
+    public void clearCart(@RequestParam UUID uuid) {
+        cartService.clearCart(uuid);
     }
 }
+
